@@ -1,0 +1,127 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Room Decoration Booking</title>
+<style>
+*{box-sizing:border-box}
+body{margin:0;font-family:Arial,sans-serif;background:#f7f3ff;color:#222;padding:20px}
+.container{max-width:600px;margin:auto;background:white;padding:28px;border-radius:18px;box-shadow:0 8px 30px rgba(0,0,0,.1)}
+h1{text-align:center;margin-bottom:5px}
+.subtitle{text-align:center;color:#666;margin-bottom:25px}
+.price{text-align:center;font-size:24px;font-weight:bold;margin:15px 0 25px}
+label{display:block;font-weight:bold;margin:16px 0 7px}
+input,select,textarea{width:100%;padding:12px;border:1px solid #ccc;border-radius:9px;font-size:15px}
+textarea{min-height:90px;resize:vertical}
+.options{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+.options label{font-weight:normal;margin:0;border:1px solid #ddd;padding:11px;border-radius:9px}
+button{width:100%;margin-top:24px;padding:14px;border:0;border-radius:10px;background:#6c3cff;color:white;font-size:17px;font-weight:bold;cursor:pointer}
+button:hover{opacity:.9}
+button:disabled{opacity:.6;cursor:not-allowed}
+.note{text-align:center;font-size:13px;color:#777;margin-top:15px}
+.status{text-align:center;margin-top:15px;font-weight:bold}
+.status.success{color:#1a8a3f}
+.status.error{color:#c0392b}
+</style>
+</head>
+<body>
+<div class="container">
+<h1>🎀 Room Decoration Booking</h1>
+<p class="subtitle">Make your room special without spending a lot!</p>
+<div class="price">Decoration starting at just ₹250</div>
+
+<form id="bookingForm">
+<label for="name">Full Name *</label>
+<input id="name" name="name" required>
+
+<label for="phone">Phone / WhatsApp Number *</label>
+<input id="phone" name="phone" type="tel" required>
+
+<label for="type">Decoration Type *</label>
+<select id="type" name="type" required>
+<option value="">Select one</option>
+<option>Birthday</option>
+<option>Anniversary</option>
+<option>Surprise</option>
+<option>Room Makeover</option>
+<option>Other</option>
+</select>
+
+<label for="date">Preferred Date *</label>
+<input id="date" name="date" type="date" required>
+
+<label for="time">Preferred Time *</label>
+<input id="time" name="time" type="time" required>
+
+<label for="location">Room / Location *</label>
+<input id="location" name="location" required>
+
+<label>Theme / Colour Preference</label>
+<input name="theme" placeholder="e.g. Pink & white">
+
+<label for="budget">Estimated Budget</label>
+<select id="budget" name="budget">
+<option>₹250</option>
+<option>₹500</option>
+<option>₹750</option>
+<option>₹1,000+</option>
+<option>Custom</option>
+</select>
+
+<label for="requirements">Special Requirements</label>
+<textarea id="requirements" name="requirements" placeholder="Tell us what you'd like..."></textarea>
+
+<button type="submit" id="submitBtn">🎀 Submit Booking Request</button>
+<p class="note">We will contact you to confirm availability and the final price.</p>
+<p id="statusMsg" class="status"></p>
+</form>
+</div>
+
+<script>
+// Replace this with YOUR OWN Formspree endpoint from formspree.io
+const FORMSPREE_ENDPOINT = "https://formspree.io/f/mwlpdgly";
+
+const form = document.getElementById("bookingForm");
+const submitBtn = document.getElementById("submitBtn");
+const statusMsg = document.getElementById("statusMsg");
+
+form.addEventListener("submit", async function (e) {
+  e.preventDefault();
+
+  const data = new FormData(this);
+
+  // Make the email body readable instead of just raw field names
+  data.set("_subject", "New Room Decoration Booking from " + data.get("name"));
+
+  submitBtn.disabled = true;
+  submitBtn.textContent = "Sending...";
+  statusMsg.textContent = "";
+  statusMsg.className = "status";
+
+  try {
+    const response = await fetch(FORMSPREE_ENDPOINT, {
+      method: "POST",
+      body: data,
+      headers: { Accept: "application/json" },
+    });
+
+    if (response.ok) {
+      statusMsg.textContent = "✅ Booking request sent! We'll contact you soon.";
+      statusMsg.classList.add("success");
+      form.reset();
+    } else {
+      statusMsg.textContent = "❌ Something went wrong. Please try again.";
+      statusMsg.classList.add("error");
+    }
+  } catch (error) {
+    statusMsg.textContent = "❌ Network error. Please check your connection and try again.";
+    statusMsg.classList.add("error");
+  }
+
+  submitBtn.disabled = false;
+  submitBtn.textContent = "🎀 Submit Booking Request";
+});
+</script>
+</body>
+</html>
